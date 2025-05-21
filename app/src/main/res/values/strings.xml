@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">hwApp</string>
+    <string name="login">Login</string>
+    <string name="password">password</string>
+    <string name="loging">Войти</string>
+    <string name="register">Зарегестрироваться</string>
+    <string name="grades">Оценки</string>
+    <string name="all_grades">Все оценки</string>
+    <string name="prompt_subject">Предметы</string>
+    <string name="homeworks">Дз</string>
+
+</resources>

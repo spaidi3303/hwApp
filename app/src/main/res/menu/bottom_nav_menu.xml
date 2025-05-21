@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_homeworks"
+        android:icon="@drawable/baseline_book_24"
+        android:title="@string/homeworks" />
+    <item
+        android:id="@+id/nav_grades"
+        android:icon="@drawable/marks"
+        android:title="@string/grades"
+        android:checked="true" />
+    <item
+        android:id="@+id/nav_all_grades"
+        android:icon="@drawable/marks"
+        android:title="@string/all_grades" />
+</menu>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"> <!-- Центр по горизонтали -->
+
+    <Spinner
+        android:id="@+id/subjectSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:prompt="@string/prompt_subject" />
+
+
+    <EditText
+        android:id="@+id/homeworkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Введите домашнее задание"
+        android:inputType="textMultiLine"
+        android:minWidth="250dp"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:id="@+id/datePickerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Выбрать дату"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/sendHomeworkBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Отправить" />
+</LinearLayout>
