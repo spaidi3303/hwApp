@@ -2,6 +2,8 @@ package com.sammy.hwapp.fragments
 
 import android.app.DatePickerDialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +18,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sammy.hwapp.LogIo.LogIo.checkAdm
 import com.sammy.hwapp.LogIo.LogIo.getHw
+import com.sammy.hwapp.LoginActivity
 import com.sammy.hwapp.R
 import com.sammy.hwapp.showAddHomeworkDialog
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import androidx.core.content.edit
 
 data class HwEntry(
     val subject: String,
@@ -54,8 +58,7 @@ class HomeworksFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: HwAdapter
-
-    private lateinit var calendarIcon: ImageView
+    private lateinit var exitIcon: ImageView
     private lateinit var selectedDateText: TextView
     private lateinit var laterDay: ImageView
     private lateinit var nextDay: ImageView
@@ -74,6 +77,7 @@ class HomeworksFragment : Fragment() {
         nextDay = view.findViewById(R.id.rightDay)
         plusHw = view.findViewById(R.id.plusHw)
         recyclerView = view.findViewById(R.id.hwRecyclerView)
+        exitIcon = view.findViewById(R.id.logoutIcon)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
@@ -111,6 +115,10 @@ class HomeworksFragment : Fragment() {
         nextDay.setOnClickListener {
             calendar.add(Calendar.DAY_OF_MONTH, 1)
             updateDateText(className)
+        }
+
+        exitIcon.setOnClickListener {
+            logout(sharedPref)
         }
 
         return view
@@ -163,15 +171,13 @@ class HomeworksFragment : Fragment() {
                 }
 
                 activity?.runOnUiThread {
-                    if (!isAdded || view == null || recyclerView == null) return@runOnUiThread
+                    if (!isAdded || view == null) return@runOnUiThread
                     adapter = HwAdapter(hwList)
                     recyclerView.adapter = adapter
                 }
             }.start()
         }
     }
-
-
 
     private fun showDatePicker(className: String) {
         val year = calendar.get(Calendar.YEAR)
@@ -192,6 +198,15 @@ class HomeworksFragment : Fragment() {
         )
 
         datePickerDialog.show()
+    }
+
+    private fun logout(sharedPref: SharedPreferences){
+        requireActivity().finish()
+        val i = Intent(requireContext(), LoginActivity::class.java)
+        startActivity(i)
+        sharedPref.edit{ clear().apply() }
+
+
     }
 
 }

@@ -14,6 +14,7 @@ import com.sammy.hwapp.LogIo.LogIo.getMarks
 import org.json.JSONArray
 import androidx.core.content.edit
 import com.sammy.hwapp.LogIo.LogIo.getAllMarks
+import com.sammy.hwapp.LogIo.LogIo.loginUser
 import com.sammy.hwapp.LoginActivity
 
 @SuppressLint("CustomSplashScreen")
@@ -30,20 +31,28 @@ class SplashActivity : AppCompatActivity() {
 
     private fun startMainActivity() {
         val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
+
         if (sharedPref.contains("login")) {
-            finish()
-            val i = Intent(
-                this@SplashActivity,
-                MainActivity::class.java
-            )
-            startActivity(i)
+            val login = sharedPref.getString("login", "").toString()
+            val password = sharedPref.getString("password", "").toString()
+
+            loginUser(login, password) { result, error ->
+                runOnUiThread {
+                    val status = result?.toIntOrNull()
+                    if (status == 2) {
+                        val i = Intent(this@SplashActivity, MainActivity::class.java)
+                        startActivity(i)
+                    } else {
+                        val i = Intent(this@SplashActivity, LoginActivity::class.java)
+                        startActivity(i)
+                    }
+                    finish()
+                }
+            }
         } else {
-            finish()
-            val i = Intent(
-                this@SplashActivity,
-                LoginActivity::class.java
-            )
+            val i = Intent(this@SplashActivity, LoginActivity::class.java)
             startActivity(i)
+            finish()
         }
     }
 }
