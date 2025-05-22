@@ -84,6 +84,7 @@ class HomeworksFragment : Fragment() {
         val className = sharedPref.getString("class", "") ?: ""
 
         checkAdm(className, login) { result, error ->
+            if (!isAdded || view == null || activity == null || activity?.isFinishing == true) return@checkAdm
             requireActivity().runOnUiThread {
                 val status = result?.toIntOrNull()
                 if (status == 1) {
@@ -136,36 +137,40 @@ class HomeworksFragment : Fragment() {
         showHw(date, className)
     }
 
+
     private fun showHw(date: String, className: String) {
         getHw(date, className) { result, error ->
-            requireActivity().runOnUiThread {
-                if (error != null || result == null) return@runOnUiThread
+            if (error != null || result == null) return@getHw
 
+            Thread {
+                val hwList = mutableListOf<HwEntry>()
                 try {
-                    val hwList = mutableListOf<HwEntry>()
                     val jsonObject = JSONObject(result)
-
                     val keys = jsonObject.keys()
                     while (keys.hasNext()) {
                         val subject = keys.next()
                         val homeworksArray = jsonObject.getJSONArray(subject)
-
+                        val combinedHomework = StringBuilder()
                         for (i in 0 until homeworksArray.length()) {
-                            val homework = homeworksArray.getString(i)
-                            hwList.add(HwEntry(subject, homework))
+                            if (i > 0) combinedHomework.append("\n")
+                            combinedHomework.append(homeworksArray.getString(i))
                         }
+
+                        hwList.add(HwEntry(subject, combinedHomework.toString()))
                     }
-
-                    adapter = HwAdapter(hwList)
-                    recyclerView.adapter = adapter
-
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    // Можешь показать Toast, лог или сообщение об ошибке
                 }
-            }
+
+                activity?.runOnUiThread {
+                    if (!isAdded || view == null || recyclerView == null) return@runOnUiThread
+                    adapter = HwAdapter(hwList)
+                    recyclerView.adapter = adapter
+                }
+            }.start()
         }
     }
+
 
 
     private fun showDatePicker(className: String) {
