@@ -16,12 +16,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".fragment_all_marks"
-            android:exported="false" />
-        <activity
-            android:name=".fragments.HomeworksFragment"
-            android:exported="false" />
-        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>

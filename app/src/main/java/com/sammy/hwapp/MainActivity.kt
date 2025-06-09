@@ -2,15 +2,14 @@ package com.sammy.hwapp
 
 import com.sammy.hwapp.fragments.HomeworksFragment
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sammy.hwapp.databinding.ActivityMainBinding
 import com.sammy.hwapp.fragments.AllGradesFragment
 import com.sammy.hwapp.fragments.MarksFragment
+import com.sammy.hwapp.fragments.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -52,6 +51,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_all_grades -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_fragment_container, AllGradesFragment())
+                        .commit()
+                    true
+                }
+                R.id.settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_fragment_container, SettingsFragment())
                         .commit()
                     true
                 }

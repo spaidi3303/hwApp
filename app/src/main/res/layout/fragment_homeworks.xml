@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.HomeworksActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/topBar"
@@ -24,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="Hello"
+            android:text="@string/leftText"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
@@ -40,8 +39,8 @@
                 android:id="@+id/leftDay"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="вчера"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/yesterday"
                 android:src="@drawable/left"/>
 
 
@@ -50,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="31 сентября 2012"
+                android:text="@string/date"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
 
@@ -58,21 +57,22 @@
                 android:id="@+id/rightDay"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_marginLeft="10dp"
-                android:contentDescription="завтра"
+                android:layout_marginStart="10dp"
+                android:contentDescription="@string/tommorow"
                 android:src="@drawable/right"/>
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/logoutIcon"
+            android:id="@+id/exit"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:contentDescription="Выход"
+            android:contentDescription="@string/exit"
             android:src="@drawable/exit"/>
     </LinearLayout>
 
     <ImageView
         android:id="@+id/plusHw"
+        android:contentDescription="@string/plushw"
         android:elevation="10dp"
         android:layout_width="73dp"
         android:layout_height="69dp"

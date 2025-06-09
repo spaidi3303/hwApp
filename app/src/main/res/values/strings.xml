@@ -8,5 +8,14 @@
     <string name="all_grades">Все оценки</string>
     <string name="prompt_subject">Предметы</string>
     <string name="homeworks">Дз</string>
+    <string name="tommorow">завтра</string>
+    <string name="exit">Выход</string>
+    <string name="plushw">plusHw</string>
+    <string name="date">31 сентября 2012</string>
+    <string name="yesterday">вчера</string>
+    <string name="leftText">Hello</string>
+    <string name="settings">Настройки</string>
+    <string name="class">class</string>
+    <string name="classname">класс</string>
 
 </resources>

@@ -10,6 +10,10 @@
         android:checked="true" />
     <item
         android:id="@+id/nav_all_grades"
-        android:icon="@drawable/marks"
+        android:icon="@drawable/all_marks"
         android:title="@string/all_grades" />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/settings"
+        android:title="@string/settings" />
 </menu>

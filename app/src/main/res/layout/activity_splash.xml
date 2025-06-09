@@ -8,7 +8,7 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/orthodox_cross"
         android:layout_gravity="center" />
 
     <ProgressBar

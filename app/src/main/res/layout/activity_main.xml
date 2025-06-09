@@ -12,13 +12,13 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="70dp" />
 
-    <!-- Нижнее навигационное меню -->
+<!--     Нижнее навигационное меню -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_gravity="bottom"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -75,7 +75,7 @@ class HomeworksFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeworksBinding.inflate(inflater, container, false)
 
         binding.hwRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -116,7 +116,7 @@ class HomeworksFragment : Fragment() {
             updateDateText(className)
         }
 
-        binding.logoutIcon.setOnClickListener {
+        binding.exit.setOnClickListener {
             logout(sharedPref)
         }
 
