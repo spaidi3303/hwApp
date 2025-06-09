@@ -19,25 +19,28 @@ import com.sammy.hwapp.LogIo.LogIo.checkDiaries
 import com.sammy.hwapp.LogIo.LogIo.getDatas
 import com.sammy.hwapp.LogIo.LogIo.loginUser
 import com.sammy.hwapp.RegisterActivity
+import com.sammy.hwapp.databinding.ActivityLoginBinding
 import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
+    private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        var enterLogin: EditText = findViewById<EditText>(R.id.enterLogin)
-        var enterPassword: EditText = findViewById<EditText>(R.id.enterPassword)
-        var lgButton: Button = findViewById<Button>(R.id.lgButton)
-        var regButton: Button = findViewById<Button>(R.id.regButton)
-
+        val enterLogin = binding.enterLogin
+        val enterPassword = binding.enterPassword
+        val lgButton = binding.lgButton
+        val regButton = binding.regButton
 
         lgButton.setOnClickListener {
             val login = enterLogin.text.toString()
@@ -48,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 else -> {
-                    loginUser(login, password) { result, error ->
+                    loginUser(login, password) { result ->
                         runOnUiThread {
                             val status = result?.toInt()
 
@@ -64,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                                 2 -> {
-                                    getDatas(login) { result, error ->
+                                    getDatas(login) { result ->
                                         runOnUiThread {
                                             if (result != null) {
                                                 val json = JSONObject(result)
@@ -72,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
                                                 val loginDn = json.getString("login_dn")
                                                 val passwordDn = json.getString("password_dn")
 
-                                                // Сохранение данных
 
                                                 val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
                                                 sharedPref.edit {

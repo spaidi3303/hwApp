@@ -9,34 +9,46 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.sammy.hwapp.LogIo.LogIo.checkAdm
 import com.sammy.hwapp.LogIo.LogIo.getHw
 import com.sammy.hwapp.LoginActivity
 import com.sammy.hwapp.R
 import com.sammy.hwapp.showAddHomeworkDialog
 import org.json.JSONArray
-import org.json.JSONObject
 import java.util.*
 import androidx.core.content.edit
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.sammy.hwapp.databinding.FragmentHomeworksBinding
+import androidx.core.view.isGone
 
 data class HwEntry(
     val subject: String,
+    val time: String,
     val homework: String
 )
+
 
 class HwAdapter(private val homework: List<HwEntry>) :
     RecyclerView.Adapter<HwAdapter.HwViewHolder>() {
 
     class HwViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val hwSubject: TextView = view.findViewById(R.id.hwSubject)
-        val hwText: TextView = view.findViewById(R.id.hwText)
+        val hwTime: TextView = view.findViewById(R.id.hwTime)
+        val hwHomework: TextView = view.findViewById(R.id.hwHomework)
+        init {
+            view.setOnClickListener {
+                if (hwHomework.isGone) {
+                    hwHomework.visibility = View.VISIBLE
+                } else {
+                    hwHomework.visibility = View.GONE
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HwViewHolder {
@@ -48,80 +60,67 @@ class HwAdapter(private val homework: List<HwEntry>) :
     override fun onBindViewHolder(holder: HwViewHolder, position: Int) {
         val item = homework[position]
         holder.hwSubject.text = item.subject
-        holder.hwText.text = item.homework
+        holder.hwTime.text = item.time
+        holder.hwHomework.text = item.homework
     }
 
     override fun getItemCount(): Int = homework.size
 }
 
 class HomeworksFragment : Fragment() {
-
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var binding: FragmentHomeworksBinding
     private lateinit var adapter: HwAdapter
-    private lateinit var exitIcon: ImageView
-    private lateinit var selectedDateText: TextView
-    private lateinit var laterDay: ImageView
-    private lateinit var nextDay: ImageView
-    private lateinit var plusHw: ImageView
-
     private val calendar: Calendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_homeworks, container, false)
+        binding = FragmentHomeworksBinding.inflate(inflater, container, false)
 
-        selectedDateText = view.findViewById(R.id.centerDateText)
-        laterDay = view.findViewById(R.id.leftDay)
-        nextDay = view.findViewById(R.id.rightDay)
-        plusHw = view.findViewById(R.id.plusHw)
-        recyclerView = view.findViewById(R.id.hwRecyclerView)
-        exitIcon = view.findViewById(R.id.logoutIcon)
-
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        recyclerView.addItemDecoration(divider)
+        binding.hwRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val divider =
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.hwRecyclerView.addItemDecoration(divider)
 
         val sharedPref = requireContext().getSharedPreferences("UserData", MODE_PRIVATE)
         val login = sharedPref.getString("login", "") ?: ""
         val className = sharedPref.getString("class", "") ?: ""
 
-        checkAdm(className, login) { result, error ->
+        checkAdm(className, login) { result ->
             if (!isAdded || view == null || activity == null || activity?.isFinishing == true) return@checkAdm
             requireActivity().runOnUiThread {
                 val status = result?.toIntOrNull()
                 if (status == 1) {
-                    plusHw.visibility = View.VISIBLE
+                    binding.plusHw.visibility = View.VISIBLE
                 }
             }
         }
-        recyclerView = view.findViewById(R.id.hwRecyclerView)
         updateDateText(className)
 
-        plusHw.setOnClickListener {
+        binding.plusHw.setOnClickListener {
             showAddHomeworkDialog(requireContext())
         }
 
-        selectedDateText.setOnClickListener {
+        binding.centerDateText.setOnClickListener {
             showDatePicker(className)
         }
 
-        laterDay.setOnClickListener {
+        binding.leftDay.setOnClickListener {
             calendar.add(Calendar.DAY_OF_MONTH, -1)
             updateDateText(className)
         }
 
-        nextDay.setOnClickListener {
+        binding.rightDay.setOnClickListener {
             calendar.add(Calendar.DAY_OF_MONTH, 1)
             updateDateText(className)
         }
 
-        exitIcon.setOnClickListener {
+        binding.logoutIcon.setOnClickListener {
             logout(sharedPref)
         }
 
-        return view
+        return binding.root
     }
 
     private fun updateDateText(className: String) {
@@ -129,55 +128,73 @@ class HomeworksFragment : Fragment() {
         val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         val date = "%02d.%02d.%04d".format(day, month, year)
-        val formatter = java.text.SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val parsedDate = formatter.parse(date)
-
-        val calendar = Calendar.getInstance()
-        calendar.time = parsedDate!!
 
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
         if (dayOfWeek == Calendar.SUNDAY) {
-            Toast.makeText(requireContext(), "В воскресенье домашки нет", Toast.LENGTH_SHORT).show()
+            val hwList = listOf(
+                HwEntry("Воскресенье", "0_0", "Храни вас Господь!")
+            )
+            binding.centerDateText.text = date
+            binding.hwRecyclerView.adapter = HwAdapter(hwList)
+
             return
         }
-        selectedDateText.text = date
+        binding.centerDateText.text = date
         showHw(date, className)
     }
 
 
     private fun showHw(date: String, className: String) {
-        getHw(date, className) { result, error ->
-            if (error != null || result == null) return@getHw
+        val lessonTimes = arrayOf(
+            "08:00\n08:40",
+            "08:50\n09:30",
+            "09:40\n10:20",
+            "10:30\n11:10",
+            "11:20\n12:00",
+            "12:10\n12:50",
+            "13:00\n13:40",
+            "13:50\n14:30"
+        )
+
+
+        getHw(date, className) { result ->
 
             Thread {
                 val hwList = mutableListOf<HwEntry>()
-                try {
-                    val jsonObject = JSONObject(result)
-                    val keys = jsonObject.keys()
-                    while (keys.hasNext()) {
-                        val subject = keys.next()
-                        val homeworksArray = jsonObject.getJSONArray(subject)
-                        val combinedHomework = StringBuilder()
-                        for (i in 0 until homeworksArray.length()) {
-                            if (i > 0) combinedHomework.append("\n")
-                            combinedHomework.append(homeworksArray.getString(i))
+
+                val jsonArray = JSONArray(result!!)
+                for (i in 0 until jsonArray.length()) {
+                    val entry = jsonArray.getString(i)
+                    val parts = entry.split(".", limit = 2)
+                    if (parts.size == 2) {
+                        val subject = "" + i.plus(1) + ". " + parts[0]
+                        val homework = parts[1]
+                        val list = homework
+                            .replace("[", "")
+                            .replace("]", "")
+                            .replace("'", "")
+                            .split(", ")
+                        val hw = if (list.size > 1) {
+                            list.joinToString("\n")
+                        } else {
+                            list[0]
                         }
 
-                        hwList.add(HwEntry(subject, combinedHomework.toString()))
+                        hwList.add(HwEntry(subject, lessonTimes[i], hw))
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
+
 
                 activity?.runOnUiThread {
                     if (!isAdded || view == null) return@runOnUiThread
                     adapter = HwAdapter(hwList)
-                    recyclerView.adapter = adapter
+                    binding.hwRecyclerView.adapter = adapter
                 }
             }.start()
         }
     }
+
 
     private fun showDatePicker(className: String) {
         val year = calendar.get(Calendar.YEAR)

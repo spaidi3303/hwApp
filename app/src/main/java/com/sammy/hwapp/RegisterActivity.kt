@@ -19,13 +19,16 @@ import com.sammy.hwapp.LoginActivity
 import org.json.JSONObject
 import kotlin.math.log
 import androidx.core.content.edit
+import com.sammy.hwapp.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
+    private lateinit var binding: ActivityRegisterBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_register)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -33,12 +36,12 @@ class RegisterActivity : AppCompatActivity() {
         }
 
 
-        var etUsername: EditText = findViewById(R.id.etUsername)
-        var etPassword: EditText = findViewById(R.id.etPassword)
-        var classSpinner: Spinner = findViewById(R.id.classSpinner)
-        var btnRegister: Button = findViewById(R.id.btnRegister)
-        var etLoginDn: EditText = findViewById(R.id.etLoginDnevnik)
-        var etPasswordDn: EditText = findViewById(R.id.etPasswordDnevnik)
+        val etUsername = binding.etUsername
+        val etPassword = binding.etPassword
+        val classSpinner = binding.classSpinner
+        val btnRegister = binding.btnRegister
+        val etLoginDn = binding.etLoginDnevnik
+        val etPasswordDn = binding.etPassword
 
         val classList = listOf("10A", "10B", "10V")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, classList)
@@ -77,7 +80,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 else -> {
                     btnRegister.isEnabled = false
-                    checkDiaries(login, passw) { result, error ->
+                    checkDiaries(login, passw) { result ->
                         runOnUiThread {
                             val status = result?.toInt()
                             if (status == 0) {
@@ -94,14 +97,13 @@ class RegisterActivity : AppCompatActivity() {
                                     selectedClass,
                                     login,
                                     passw
-                                ) { result, error ->
+                                ) { result ->
                                     runOnUiThread {
-                                        val status = result?.toBoolean() ?: false
-                                        if (!status) {
+                                        val statusReg = result?.toBoolean() ?: false
+                                        if (!statusReg) {
                                             btnRegister.error = "Произошла ошибка!"
                                             btnRegister.isEnabled = true
                                         } else {
-                                            // Сохранение данных
                                             val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
                                             sharedPref.edit {
                                                 putString("login", username)

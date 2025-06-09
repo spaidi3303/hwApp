@@ -4,18 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.sammy.hwapp.LogIo.LogIo.checkDiaries
 import com.sammy.hwapp.LogIo.LogIo.getMarks
 import org.json.JSONArray
 import androidx.core.content.edit
 import com.sammy.hwapp.LogIo.LogIo.getAllMarks
 import com.sammy.hwapp.LogIo.LogIo.loginUser
-import com.sammy.hwapp.LoginActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -36,7 +30,7 @@ class SplashActivity : AppCompatActivity() {
             val login = sharedPref.getString("login", "").toString()
             val password = sharedPref.getString("password", "").toString()
 
-            loginUser(login, password) { result, error ->
+            loginUser(login, password) { result ->
                 runOnUiThread {
                     val status = result?.toIntOrNull()
                     if (status == 2) {
@@ -66,7 +60,7 @@ object DataLoader {
 
             val marksPref = context.getSharedPreferences("userMarks", Context.MODE_PRIVATE)
 
-            getMarks(login, passw) { result, error ->
+            getMarks(login, passw) { result ->
                 val dataList = JSONArray(result)
                 val jsonArray = JSONArray()
 
@@ -84,7 +78,7 @@ object DataLoader {
                 }
             }
 
-            getAllMarks(login, passw) { avgResult, avgError ->
+            getAllMarks(login, passw) { avgResult ->
                 val rawData = JSONArray(avgResult)
                 val avgMarksArray = JSONArray()
 

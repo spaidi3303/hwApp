@@ -91,7 +91,7 @@ fun showAddHomeworkDialog(context: Context) {
             ).show()
             return@setOnClickListener
         }
-        checkLessonInDay(className, weekday, selectedSubject) { result, error ->
+        checkLessonInDay(className, weekday, selectedSubject) { result ->
             val status = result?.toInt()
 
             if (context is android.app.Activity) {
@@ -108,27 +108,25 @@ fun showAddHomeworkDialog(context: Context) {
                             selectedSubject,
                             dateText.text.toString(),
                             className
-                        ) { result, error ->
-                            val status = result?.toInt()
+                        ) { result ->
 
-                            if (context is android.app.Activity) {
-                                context.runOnUiThread {
-                                    if (status == 1) {
-                                        Toast.makeText(
-                                            context,
-                                            "Домашнее задание было успешно добавлено!",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        if (dialog.isShowing) dialog.dismiss()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Произошла ошибка",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                            context.runOnUiThread {
+                                if (result?.toInt() == 1) {
+                                    Toast.makeText(
+                                        context,
+                                        "Домашнее задание было успешно добавлено!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    if (dialog.isShowing) dialog.dismiss()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Произошла ошибка",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
+
                         }
                     }
                 }
