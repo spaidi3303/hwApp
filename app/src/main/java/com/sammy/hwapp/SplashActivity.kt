@@ -11,7 +11,9 @@ import org.json.JSONArray
 import androidx.core.content.edit
 import com.sammy.hwapp.LogIo.LogIo.checkAdm
 import com.sammy.hwapp.LogIo.LogIo.getAllMarks
+import com.sammy.hwapp.LogIo.LogIo.getMembers
 import com.sammy.hwapp.LogIo.LogIo.loginUser
+import org.json.JSONObject
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -103,8 +105,23 @@ object DataLoader {
             val className = sharedPref.getString("class", "") ?: ""
             val _login = sharedPref.getString("login", "") ?: ""
             checkAdm(className, _login) { result ->
-                    val status = result?.toIntOrNull()
-                    sharedPref.edit { putString("ifAdmin", status.toString()) }
+                val status = result?.toIntOrNull()
+                sharedPref.edit { putString("ifAdmin", status.toString()) }
+            }
+
+            getMembers(className) { result ->
+                val res = JSONObject(result!!)
+                val memberList = res.getJSONArray("members")
+                val adminList = res.getJSONArray("admins")
+
+                val membersJsonString = memberList.toString()
+                val adminsJsonString = adminList.toString()
+
+                sharedPref.edit {
+                    putString("members", membersJsonString)
+                    putString("admins", adminsJsonString)
+                    apply()
+                }
             }
 
         } else {

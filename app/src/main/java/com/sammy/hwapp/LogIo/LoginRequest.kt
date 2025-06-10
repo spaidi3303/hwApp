@@ -82,6 +82,12 @@ object LogIo {
         response("database/get_hw", json, callback)
     }
 
+    fun getMembers(className: String, callback: (String?) -> Unit) {
+        val json = JSONObject()
+        json.put("class_name", className)
+        response("database/get_members", json, callback)
+    }
+
     private fun response(method: String, json: JSONObject, callback: (result: String?) -> Unit){
         val client = OkHttpClient()
         val mediaType = "application/json; charset=utf-8".toMediaType()
