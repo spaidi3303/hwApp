@@ -84,18 +84,10 @@ class HomeworksFragment : Fragment() {
         binding.hwRecyclerView.addItemDecoration(divider)
 
         val sharedPref = requireContext().getSharedPreferences("UserData", MODE_PRIVATE)
-        val login = sharedPref.getString("login", "") ?: ""
         val className = sharedPref.getString("class", "") ?: ""
+        val ifAdmin = sharedPref.getString("ifAdmin", "") ?: ""
+        if (ifAdmin == "1") binding.plusHw.visibility = View.VISIBLE
 
-        checkAdm(className, login) { result ->
-            if (!isAdded || view == null || activity == null || activity?.isFinishing == true) return@checkAdm
-            requireActivity().runOnUiThread {
-                val status = result?.toIntOrNull()
-                if (status == 1) {
-                    binding.plusHw.visibility = View.VISIBLE
-                }
-            }
-        }
         updateDateText(className)
 
         binding.plusHw.setOnClickListener {

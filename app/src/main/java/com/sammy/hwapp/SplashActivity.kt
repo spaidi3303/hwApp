@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.sammy.hwapp.LogIo.LogIo.getMarks
 import org.json.JSONArray
 import androidx.core.content.edit
+import com.sammy.hwapp.LogIo.LogIo.checkAdm
 import com.sammy.hwapp.LogIo.LogIo.getAllMarks
 import com.sammy.hwapp.LogIo.LogIo.loginUser
 
@@ -96,6 +98,13 @@ object DataLoader {
                     putString("marks_all", avgMarksArray.toString())
                 }
                 callback()
+            }
+
+            val className = sharedPref.getString("class", "") ?: ""
+            val _login = sharedPref.getString("login", "") ?: ""
+            checkAdm(className, _login) { result ->
+                    val status = result?.toIntOrNull()
+                    sharedPref.edit { putString("ifAdmin", status.toString()) }
             }
 
         } else {
