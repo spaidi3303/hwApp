@@ -1,11 +1,15 @@
 package com.sammy.hwapp.fragments
 
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.sammy.hwapp.LoginActivity
+import com.sammy.hwapp.SettingActivity
+import com.sammy.hwapp.SplashActivity
 import com.sammy.hwapp.databinding.FragmentSettingsBinding
 import org.json.JSONArray
 
@@ -31,7 +35,14 @@ class SettingsFragment : Fragment() {
         if (ifAdmin == "1") binding.adminsLine.visibility = View.VISIBLE
 
         binding.membersLine.setOnClickListener {
-
+            val intent = Intent(requireActivity(), SettingActivity::class.java)
+            intent.putExtra("fragment", "members")
+            startActivity(intent)
+        }
+        binding.adminsLine.setOnClickListener {
+            val intent = Intent(requireActivity(), SettingActivity::class.java)
+            intent.putExtra("fragment", "admins")
+            startActivity(intent)
         }
 
 

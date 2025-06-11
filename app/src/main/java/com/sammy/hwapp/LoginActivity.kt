@@ -1,24 +1,16 @@
 package com.sammy.hwapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.JsonReader
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.sammy.hwapp.LogIo.LogIo.checkDiaries
 import com.sammy.hwapp.LogIo.LogIo.getDatas
 import com.sammy.hwapp.LogIo.LogIo.loginUser
-import com.sammy.hwapp.RegisterActivity
 import com.sammy.hwapp.databinding.ActivityLoginBinding
 import org.json.JSONObject
 
