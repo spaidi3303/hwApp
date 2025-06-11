@@ -2,6 +2,7 @@ package com.sammy.hwapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -9,8 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.sammy.hwapp.LogIo.LogIo.getDatas
 import com.sammy.hwapp.LogIo.LogIo.loginUser
+import com.sammy.hwapp.RegisterActivity
 import com.sammy.hwapp.databinding.ActivityLoginBinding
 import org.json.JSONObject
 
@@ -29,81 +36,80 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        val enterLogin = binding.enterLogin
+        val enterEmail = binding.editTextEmail
         val enterPassword = binding.enterPassword
         val lgButton = binding.lgButton
         val regButton = binding.regButton
 
         lgButton.setOnClickListener {
-            val login = enterLogin.text.toString()
+            val email = enterEmail.text.toString().trim()
             val password = enterPassword.text.toString()
-            when {
-                login.isEmpty() || password.isEmpty() -> {
-                    Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
-                }
+            val auth = FirebaseAuth.getInstance()
 
-                else -> {
-                    loginUser(login, password) { result ->
-                        runOnUiThread {
-                            val status = result?.toInt()
+            val db = FirebaseFirestore.getInstance()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                binding.editTextEmail.error = "Неверный формат почты"
+                return@setOnClickListener
+            }
 
-                            when (status) {
-                                0 -> {
-                                    enterLogin.error = "Пользователь не найден"
-                                    regButton.visibility = Button.VISIBLE
-
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (!task.isSuccessful) {
+                        Toast.makeText(
+                            this,
+                            "Неверный пользователь или пароль!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        enterEmail.error = "Пользователь не найден"
+                        regButton.visibility = Button.VISIBLE
+                        enterPassword.error = "Неверный пароль"
+                        return@addOnCompleteListener
+                    } else {
+                        binding.lgButton.isActivated = false
+                        val userId = auth.currentUser!!.uid
+                        db.collection("users").document(userId)
+                            .get()
+                            .addOnSuccessListener { documentSnapshot ->
+                                val username = documentSnapshot.getString("username")
+                                val className = documentSnapshot.getString("class")
+                                val loginDn = documentSnapshot.getString("diaryLogin")
+                                val passwordDn = documentSnapshot.getString("diaryPassword")
+                                val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
+                                sharedPref.edit {
+                                    putString("login", username)
+                                    putString("password", password)
+                                    putString("class", className)
+                                    putString("loginDn", loginDn)
+                                    putString("passwordDn", passwordDn)
+                                    apply()
                                 }
-
-                                1 -> {
-                                    enterPassword.error = "Неверный пароль"
-                                }
-
-                                2 -> {
-                                    getDatas(login) { result ->
-                                        runOnUiThread {
-                                            if (result != null) {
-                                                val json = JSONObject(result)
-                                                val className = json.getString("class")
-                                                val loginDn = json.getString("login_dn")
-                                                val passwordDn = json.getString("password_dn")
-
-
-                                                val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
-                                                sharedPref.edit {
-                                                    putString("login", login)
-                                                    putString("password", password)
-                                                    putString("class", className)
-                                                    putString("loginDn", loginDn)
-                                                    putString("passwordDn", passwordDn)
-                                                    apply()
-                                                }
-
-                                                DataLoader.loadMarks(this) {
-                                                    finish()
-                                                    val i = Intent(
-                                                        this@LoginActivity,
-                                                        MainActivity::class.java
-                                                    )
-                                                    startActivity(i)
-                                                }
-                                            }
-                                        }
-                                    }
+                                DataLoader.loadMarks(this) {
+                                    finish()
+                                    val i = Intent(
+                                        this@LoginActivity,
+                                        MainActivity::class.java
+                                    )
+                                    startActivity(i)
                                 }
                             }
-
-                        }
                     }
                 }
 
 
-            }
         }
+
 
         regButton.setOnClickListener {
             finish()
             val i = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(i)
         }
+
     }
+
 }
+

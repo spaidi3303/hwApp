@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bottomNavigation.selectedItemId = R.id.nav_grades
+        binding.bottomNavigation.selectedItemId = R.id.nav_homeworks
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, MarksFragment())
+                .replace(R.id.main_fragment_container, HomeworksFragment())
                 .commit()
         }
 

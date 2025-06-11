@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -9,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sammy.hwapp"
-        minSdk = 24
+        minSdk = 24 // Подходит для Firebase UI
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -51,6 +52,9 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.preference.ktx)
+    implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

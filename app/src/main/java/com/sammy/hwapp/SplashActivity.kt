@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sammy.hwapp.LogIo.LogIo.getMarks
 import org.json.JSONArray
 import androidx.core.content.edit
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.sammy.hwapp.LogIo.LogIo.checkAdm
 import com.sammy.hwapp.LogIo.LogIo.getAllMarks
 import com.sammy.hwapp.LogIo.LogIo.getMembers
@@ -28,25 +30,18 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun startMainActivity() {
-        val sharedPref = getSharedPreferences("UserData", MODE_PRIVATE)
-
-        if (sharedPref.contains("login")) {
-            val login = sharedPref.getString("login", "").toString()
-            val password = sharedPref.getString("password", "").toString()
-
-            loginUser(login, password) { result ->
-                runOnUiThread {
-                    val status = result?.toIntOrNull()
-                    if (status == 2) {
-                        val i = Intent(this@SplashActivity, MainActivity::class.java)
-                        startActivity(i)
-                    } else {
-                        val i = Intent(this@SplashActivity, LoginActivity::class.java)
-                        startActivity(i)
-                    }
+        val auth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
+        if (auth.currentUser != null) {
+            val userId = auth.currentUser!!.uid
+            db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val i = Intent(this@SplashActivity, MainActivity::class.java)
+                    startActivity(i)
                     finish()
+
                 }
-            }
         } else {
             val i = Intent(this@SplashActivity, LoginActivity::class.java)
             startActivity(i)

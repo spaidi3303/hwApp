@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sammy.hwapp.databinding.FragmentHomeworksBinding
 import androidx.core.view.isGone
+import com.google.firebase.auth.FirebaseAuth
 
 data class HwEntry(
     val subject: String,
@@ -213,7 +214,8 @@ class HomeworksFragment : Fragment() {
         requireActivity().finish()
         val i = Intent(requireContext(), LoginActivity::class.java)
         startActivity(i)
-        sharedPref.edit{ clear().apply() }
+        val auth = FirebaseAuth.getInstance()
+        auth.signOut()
 
 
     }

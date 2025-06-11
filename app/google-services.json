@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "6088960881",
+    "project_id": "hwapp2025",
+    "storage_bucket": "hwapp2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6088960881:android:2d3fec38eef1fd3034a4d0",
+        "android_client_info": {
+          "package_name": "com.sammy.hwapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAfoUPt5fDWwJ3h_ELbAkgNpjjTNiK0Fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
