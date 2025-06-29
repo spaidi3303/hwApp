@@ -66,7 +66,10 @@ fun AllGradesScreen() {
             .statusBarsPadding()
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(
+            top = 16.dp,
+            bottom = 100.dp
+        )
     ) {
         itemsIndexed(subjectList) { index, item ->
             SubjectAllGradesCard(item, gradesList[index], marksList[index])
