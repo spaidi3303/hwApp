@@ -2,6 +2,7 @@ package com.sammy.hwapp.Activity.Register
 
 import android.content.Context.MODE_PRIVATE
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.School
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -51,143 +54,151 @@ fun RegisterActivity(navHostController: NavHostController) {
     val context = LocalContext.current
     var isButtonEnabled by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
-    Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(28.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Surface(
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(28.dp)
         ) {
-            NormalTextComponent(value = "Мир Ти,")
-            HeadingTextComponent(value = "Создай Аккаунт")
-            Spacer(modifier = Modifier.height(25.dp))
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                NormalTextComponent(value = "Мир Ти,")
+                HeadingTextComponent(value = "Создай Аккаунт")
+                Spacer(modifier = Modifier.height(25.dp))
 
-            Column {
-                MyTextFieldComponent(
-                    labelValue = "Логин",
-                    icon = Icons.Outlined.Person,
-                    textValue = login,
-                    onValueChange = {
-                        login = it
-                        loginError = null
-                    },
-                    isError = showError && login.isBlank()
-                )
-                loginError?.let {
-                    Text(it, color = Color.Red, fontSize = 12.sp)
+                Column {
+                    MyTextFieldComponent(
+                        labelValue = "Логин",
+                        icon = Icons.Outlined.Person,
+                        textValue = login,
+                        onValueChange = {
+                            login = it
+                            loginError = null
+                        },
+                        isError = showError && login.isBlank()
+                    )
+                    loginError?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    PasswordTextFieldComponent(
+                        labelValue = "Пароль",
+                        icon = Icons.Outlined.Lock,
+                        textValue = password,
+                        onValueChange = {
+                            password = it
+                            passwordError = null
+                        },
+                        isError = showError && password.isBlank()
+                    )
+                    passwordError?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
+                    MyTextFieldComponent(
+                        labelValue = "Логин дневника",
+                        icon = Icons.Outlined.Person,
+                        textValue = loginDn,
+                        onValueChange = {
+                            loginDn = it
+                            loginDnError = null
+                        },
+                        isError = showError && loginDn.isBlank()
+                    )
+                    loginDnError?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    PasswordTextFieldComponent(
+                        labelValue = "Пароль дневника",
+                        icon = Icons.Outlined.Lock,
+                        textValue = passwordDn,
+                        onValueChange = {
+                            passwordDn = it
+                            passwordDnError = null
+                        },
+                        isError = showError && passwordDn.isBlank()
+                    )
+                    ClassSelectorComponent(
+                        selectedClass = selectedClass,
+                        onClassSelected = { selectedClass = it },
+                        icon = Icons.Outlined.School,
+                        isError = showError && selectedClass.isBlank()
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    RegisterButton(
+                        onClick = {
+                            when {
+                                login.isBlank() || password.isBlank() || loginDn.isBlank() || passwordDn.isBlank() || selectedClass.isBlank() -> {
+                                    showError = true
+                                    loginError =
+                                        if (login.isBlank()) "Введите логин" else null
+                                    loginDnError =
+                                        if (loginDn.isBlank()) "Введите логин от дневника" else null
+                                    passwordError =
+                                        if (password.isBlank()) "Введите пароль" else null
+                                    passwordDnError =
+                                        if (passwordDn.isBlank()) "Введите пароль от дневника" else null
+                                    classError =
+                                        if (selectedClass.isBlank()) "Выберите класс" else null
+                                    return@RegisterButton
+                                }
+
+                                login.length < 3 || password.length < 6 -> {
+                                    showError = true
+                                    loginError =
+                                        if (login.length < 3) "Логин слишком короткий" else null
+                                    passwordError =
+                                        if (password.length < 6) "Пароль слишком простой" else null
+                                    return@RegisterButton
+                                }
+
+                                !login.matches(Regex("^[a-zA-Z]+\$")) -> {
+                                    loginError =
+                                        "Логин должен содержать только английские буквы"
+                                    return@RegisterButton
+                                }
+
+                                !password.matches(Regex("^[a-zA-Z0-9]+\$")) -> {
+                                    passwordError =
+                                        "Пароль должен содержать только латинские буквы и цифры"
+                                    return@RegisterButton
+                                }
+                            }
+                            selectedClass =
+                                selectedClass.replace("А", "A").replace("Б", "B").replace("В", "V")
+                            showError = false
+                            CheckDataDiaries(
+                                login = login,
+                                password = password,
+                                loginDnevnik = loginDn,
+                                passwordDnevnik = passwordDn,
+                                selectedClass = selectedClass,
+                                navHostController = navHostController,
+                                context = context,
+                                errorMessage = { errorMessage = it },
+                                onErrorDnLogin = { loginDnError = it },
+                                onErrorDnPassword = { passwordDnError = it },
+                                isLoading = { isLoading = it }
+                            )
+                        },
+                        isEnabled = isButtonEnabled,
+                        errorMessage = errorMessage,
+                        navHostController
+                    )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                PasswordTextFieldComponent(
-                    labelValue = "Пароль",
-                    icon = Icons.Outlined.Lock,
-                    textValue = password,
-                    onValueChange = {
-                        password = it
-                        passwordError = null
-                    },
-                    isError = showError && password.isBlank()
-                )
-                passwordError?.let {
-                    Text(it, color = Color.Red, fontSize = 12.sp)
-                }
-                MyTextFieldComponent(
-                    labelValue = "Логин дневника",
-                    icon = Icons.Outlined.Person,
-                    textValue = loginDn,
-                    onValueChange = {
-                        loginDn = it
-                        loginDnError = null
-                    },
-                    isError = showError && loginDn.isBlank()
-                )
-                loginDnError?.let {
-                    Text(it, color = Color.Red, fontSize = 12.sp)
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                PasswordTextFieldComponent(
-                    labelValue = "Пароль дневника",
-                    icon = Icons.Outlined.Lock,
-                    textValue = passwordDn,
-                    onValueChange = {
-                        passwordDn = it
-                        passwordDnError = null
-                    },
-                    isError = showError && passwordDn.isBlank()
-                )
-                ClassSelectorComponent(
-                    selectedClass = selectedClass,
-                    onClassSelected = { selectedClass = it },
-                    icon = Icons.Outlined.School,
-                    isError = showError && selectedClass.isBlank()
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                RegisterButton(
-                    onClick = {
-                        when {
-                            login.isBlank() || password.isBlank() || loginDn.isBlank() || passwordDn.isBlank() || selectedClass.isBlank() -> {
-                                showError = true
-                                loginError =
-                                    if (login.isBlank()) "Введите логин" else null
-                                loginDnError =
-                                    if (loginDn.isBlank()) "Введите логин от дневника" else null
-                                passwordError =
-                                    if (password.isBlank()) "Введите пароль" else null
-                                passwordDnError =
-                                    if (passwordDn.isBlank()) "Введите пароль от дневника" else null
-                                classError =
-                                    if (selectedClass.isBlank()) "Выберите класс" else null
-                                return@RegisterButton
-                            }
-
-                            login.length < 3 || password.length < 6 -> {
-                                showError = true
-                                loginError =
-                                    if (login.length < 3) "Логин слишком короткий" else null
-                                passwordError =
-                                    if (password.length < 6) "Пароль слишком простой" else null
-                                return@RegisterButton
-                            }
-
-                            !login.matches(Regex("^[a-zA-Z]+\$")) -> {
-                                loginError =
-                                    "Логин должен содержать только английские буквы"
-                                return@RegisterButton
-                            }
-
-                            !password.matches(Regex("^[a-zA-Z0-9]+\$")) -> {
-                                passwordError =
-                                    "Пароль должен содержать только латинские буквы и цифры"
-                                return@RegisterButton
-                            }
-                        }
-                        selectedClass = selectedClass.replace("А", "A").replace("Б", "B").replace("В", "V")
-                        showError = false
-                        CheckDataDiaries(
-                            login = login,
-                            password = password,
-                            loginDnevnik = loginDn,
-                            passwordDnevnik = passwordDn,
-                            selectedClass = selectedClass,
-                            navHostController = navHostController,
-                            context = context,
-                            errorMessage = {errorMessage = it},
-                            onErrorDnLogin = { loginDnError = it },
-                            onErrorDnPassword = { passwordDnError = it },
-                            isButtonEnabled
-                        )
-                    },
-                    isEnabled = isButtonEnabled,
-                    errorMessage = errorMessage,
-                    navHostController
-                )
-//
             }
         }
     }
+
 }
 
 fun CheckDataDiaries(
@@ -201,7 +212,7 @@ fun CheckDataDiaries(
     errorMessage: (String) -> Unit,
     onErrorDnLogin: (String) -> Unit,
     onErrorDnPassword: (String) -> Unit,
-    isEnabled: Boolean
+    isLoading: (Boolean) -> Unit
 ) {
 
     checkDiaries(loginDnevnik, passwordDnevnik) { result ->
@@ -214,6 +225,7 @@ fun CheckDataDiaries(
                 return@runOnUiThread
             }
         } else {
+            isLoading(true)
             registerUser(
                 login,
                 password,
@@ -225,6 +237,7 @@ fun CheckDataDiaries(
                     val statusReg = result?.toBoolean() == true
                     if (!statusReg) {
                         errorMessage("Произошла ошибка")
+                        isLoading(false)
                     } else {
                         val sharedPref = context.getSharedPreferences("UserData", MODE_PRIVATE)
                         sharedPref.edit {
@@ -236,8 +249,11 @@ fun CheckDataDiaries(
                             apply()
                         }
                         DataLoader.loader(context) {
-                            navHostController.navigate("Main") {
-                                popUpTo("Register") { inclusive = true }
+                            activity.runOnUiThread {
+                                isLoading(false)
+                                navHostController.navigate("Main") {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             }
                         }
                     }

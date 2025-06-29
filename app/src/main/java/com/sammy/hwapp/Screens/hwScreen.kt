@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -53,6 +54,18 @@ import java.util.Locale
 
 @Composable
 fun HwScreen(currentDate: String) {
+    var isLoading by remember { mutableStateOf(false) }
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        HwScreenCards(currentDate, isLoading = { isLoading = it })
+    }
+}
+
+@Composable
+fun HwScreenCards(currentDate: String, isLoading: (Boolean) -> Unit){
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     val sharedPref = context.getSharedPreferences("UserData", MODE_PRIVATE)
@@ -72,6 +85,7 @@ fun HwScreen(currentDate: String) {
         "13:00\n13:40",
         "13:50\n14:30"
     )
+    isLoading(true)
     LaunchedEffect(currentDate) {
         getHw(currentDate, className) { result ->
             val jsonArray = JSONArray(result ?: "[]")
@@ -111,7 +125,7 @@ fun HwScreen(currentDate: String) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(
                 top = 16.dp,
-                bottom = 100.dp // ⬅️ добавляем запас под нижнее меню
+                bottom = 100.dp
             )
         ) {
             itemsIndexed(subjectList) { index, item ->
@@ -129,6 +143,7 @@ fun HwScreen(currentDate: String) {
             }
         }
     }
+    isLoading(false)
     if (showDialog) {
         AddHomeworkDialog(
             onDismiss = { showDialog = false },

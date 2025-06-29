@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,122 +55,133 @@ fun LoginActivity(navController: NavHostController) {
     var showError by remember { mutableStateOf(false) }
     var loginError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
-    Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(28.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+    var isLoading by remember { mutableStateOf(false) }
+
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Surface(
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(28.dp)
         ) {
-            Column {
-                NormalTextComponent(value = "Здравствуй, ")
-                HeadingTextComponent(value = "С Возвращением")
-            }
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Column {
-                MyTextFieldComponent(
-                    labelValue = "Логин",
-                    icon = Icons.Outlined.Person,
-                    textValue = login,
-                    onValueChange = {
-                        login = it
-                        loginError = null
-                    },
-                    isError = showError && login.isBlank()
-                )
-                loginError?.let {
-                    Text(it, color = Color.Red, fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                PasswordTextFieldComponent(
-                    labelValue = "Пароль",
-                    icon = Icons.Outlined.Lock,
-                    textValue = password,
-                    onValueChange = {
-                        password = it
-                        passwordError = null
-                    },
-                    isError = showError && password.isBlank()
-                )
-                passwordError?.let {
-                    Text(it, color = Color.Red, fontSize = 12.sp)
-                }
-            }
-
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                brush = Brush.horizontalGradient(listOf(Secondary, AccentColor)),
-                                shape = RoundedCornerShape(50.dp)
-                            )
-                            .fillMaxWidth(0.8f)
-                            .clickable {
-                                if (login.isBlank() || password.isBlank() || loginError != null || passwordError != null) {
-                                    showError = true
-                                    loginError = if (login.isBlank()) "Введите логин" else null
-                                    passwordError = if (password.isBlank()) "Введите пароль" else null
-                                } else if (login.length < 3 || password.length < 6) {
-                                    showError = true
-                                    loginError = if (login.length < 3) "Логин слишком короткий" else null
-                                    passwordError = if (password.length < 6) "Пароль слишком простой" else null
-                                } else {
-                                    showError = false
-                                    CheckData(
-                                        login = login,
-                                        password = password,
-                                        navController = navController,
-                                        onErrorLogin = { loginError = it },
-                                        onErrorPassword = { passwordError = it },
-                                        context = context
-                                    )
-                                }
-                            }
-                            .heightIn(48.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "Войти", color = Color.White, fontSize = 20.sp)
+                Column {
+                    NormalTextComponent(value = "Здравствуй, ")
+                    HeadingTextComponent(value = "С Возвращением")
+                }
+
+                Spacer(modifier = Modifier.height(25.dp))
+
+                Column {
+                    MyTextFieldComponent(
+                        labelValue = "Логин",
+                        icon = Icons.Outlined.Person,
+                        textValue = login,
+                        onValueChange = {
+                            login = it
+                            loginError = null
+                        },
+                        isError = showError && login.isBlank()
+                    )
+                    loginError?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    Row {
-                        Text(
-                            text = "Нет аккаунта? ",
-                            style = TextStyle(color = TextColor, fontSize = 15.sp)
-                        )
-                        Text(
-                            text = "Зарегистрироваться",
-                            style = TextStyle(color = Secondary, fontSize = 15.sp),
-                            modifier = Modifier.clickable {
-                                navController.navigate("Register")
-                            }
-                        )
+                    PasswordTextFieldComponent(
+                        labelValue = "Пароль",
+                        icon = Icons.Outlined.Lock,
+                        textValue = password,
+                        onValueChange = {
+                            password = it
+                            passwordError = null
+                        },
+                        isError = showError && password.isBlank()
+                    )
+                    passwordError?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
+                }
+
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    brush = Brush.horizontalGradient(listOf(Secondary, AccentColor)),
+                                    shape = RoundedCornerShape(50.dp)
+                                )
+                                .fillMaxWidth(0.8f)
+                                .clickable {
+                                    if (login.isBlank() || password.isBlank() || loginError != null || passwordError != null) {
+                                        showError = true
+                                        loginError = if (login.isBlank()) "Введите логин" else null
+                                        passwordError = if (password.isBlank()) "Введите пароль" else null
+                                    } else if (login.length < 3 || password.length < 6) {
+                                        showError = true
+                                        loginError = if (login.length < 3) "Логин слишком короткий" else null
+                                        passwordError = if (password.length < 6) "Пароль слишком простой" else null
+                                    } else {
+                                        showError = false
+                                        CheckData(
+                                            login = login,
+                                            password = password,
+                                            navController = navController,
+                                            onErrorLogin = { loginError = it },
+                                            onErrorPassword = { passwordError = it },
+                                            context = context,
+                                            isLoading = { isLoading = it }
+                                        )
+                                    }
+                                }
+                                .heightIn(48.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "Войти", color = Color.White, fontSize = 20.sp)
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Row {
+                            Text(
+                                text = "Нет аккаунта? ",
+                                style = TextStyle(color = TextColor, fontSize = 15.sp)
+                            )
+                            Text(
+                                text = "Зарегистрироваться",
+                                style = TextStyle(color = Secondary, fontSize = 15.sp),
+                                modifier = Modifier.clickable {
+                                    navController.navigate("Register")
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
+
 }
 
 fun CheckData(
@@ -178,7 +190,8 @@ fun CheckData(
     navController: NavHostController,
     onErrorLogin: (String) -> Unit,
     onErrorPassword: (String) -> Unit,
-    context: android.content.Context
+    context: android.content.Context,
+    isLoading: (Boolean) -> Unit
 ) {
     loginUser(login, password) { result ->
         val status = result?.toInt()
@@ -198,6 +211,7 @@ fun CheckData(
             }
 
             2 -> {
+                isLoading(true)
                 getDatas(login) { result ->
                     if (result != null) {
                         val json = JSONObject(result)
@@ -218,7 +232,7 @@ fun CheckData(
                             DataLoader.loader(context) {
                                 activity.runOnUiThread {
                                     navController.navigate("Main") {
-                                        popUpTo("Register") { inclusive = true }
+                                        popUpTo(0) { inclusive = true }
                                     }
                                 }
                             }

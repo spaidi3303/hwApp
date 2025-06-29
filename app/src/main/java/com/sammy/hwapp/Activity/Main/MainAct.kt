@@ -50,14 +50,12 @@ fun MainSActivity(navHostController: NavHostController) {
     val context = LocalContext.current
     val activity = context as? Activity
     val prefs = context.getSharedPreferences("UserData", Context.MODE_PRIVATE)
-    // Date Picker state с сегодняшней датой
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis()
     )
 
     var showDatePicker by remember { mutableStateOf(false) }
 
-    // Текущая дата для отображения
     var selectedDate by remember {
         mutableStateOf(
             datePickerState.selectedDateMillis?.let { convertMillisToDate(it) }
