@@ -1,6 +1,8 @@
 package com.sammy.hwapp.Activity.Main
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import com.sammy.hwapp.Screens.DatePickerModal
 import com.sammy.hwapp.navigation.MainScreen
@@ -43,7 +47,9 @@ import java.util.Locale
 fun MainSActivity(navHostController: NavHostController) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-
+    val context = LocalContext.current
+    val activity = context as? Activity
+    val prefs = context.getSharedPreferences("UserData", Context.MODE_PRIVATE)
     // Date Picker state с сегодняшней датой
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis()
@@ -86,7 +92,12 @@ fun MainSActivity(navHostController: NavHostController) {
                             IconButton(onClick = { showDatePicker = !showDatePicker }) {
                                 Icon(Icons.Filled.DateRange, contentDescription = "Выбрать дату")
                             }
-                            IconButton(onClick = {}) {
+                            IconButton(onClick = {
+                                prefs.edit { clear() }
+                                val activity = (context as? Activity)
+                                activity?.finishAffinity()
+
+                            }) {
                                 Icon(Icons.Filled.ExitToApp, contentDescription = "Выход")
                             }
                         }

@@ -65,15 +65,15 @@ fun LoginActivity(navController: NavHostController) {
             modifier = Modifier.fillMaxSize()
         ) {
             Column {
-                NormalTextComponent(value = "Hey, thee")
-                HeadingTextComponent(value = "Welcome Back")
+                NormalTextComponent(value = "Здравствуй, ")
+                HeadingTextComponent(value = "С Возвращением")
             }
 
             Spacer(modifier = Modifier.height(25.dp))
 
             Column {
                 MyTextFieldComponent(
-                    labelValue = "Login",
+                    labelValue = "Логин",
                     icon = Icons.Outlined.Person,
                     textValue = login,
                     onValueChange = {
@@ -89,7 +89,7 @@ fun LoginActivity(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 PasswordTextFieldComponent(
-                    labelValue = "Password",
+                    labelValue = "Пароль",
                     icon = Icons.Outlined.Lock,
                     textValue = password,
                     onValueChange = {
@@ -148,7 +148,7 @@ fun LoginActivity(navController: NavHostController) {
                             .heightIn(48.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Login", color = Color.White, fontSize = 20.sp)
+                        Text(text = "Войти", color = Color.White, fontSize = 20.sp)
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))

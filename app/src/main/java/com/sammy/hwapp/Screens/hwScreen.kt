@@ -9,12 +9,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,8 +106,13 @@ fun HwScreen(currentDate: String) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding(),
-            contentPadding = PaddingValues(vertical = 16.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                bottom = 100.dp // ⬅️ добавляем запас под нижнее меню
+            )
         ) {
             itemsIndexed(subjectList) { index, item ->
                 SubjectCard(item, lessonTimes[index], homeworkList[index])

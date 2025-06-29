@@ -164,7 +164,7 @@ fun RegisterActivity(navHostController: NavHostController) {
                                 return@RegisterButton
                             }
                         }
-
+                        selectedClass = selectedClass.replace("А", "A").replace("Б", "B").replace("В", "V")
                         showError = false
                         CheckDataDiaries(
                             login = login,
